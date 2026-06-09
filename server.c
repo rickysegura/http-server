@@ -46,8 +46,9 @@ int main() {
     read(client_fd, buffer, BUFFER_SIZE);
     printf("--- Request ---\n%s\n", buffer);
 
+    // parse the request
     parse_request(buffer, method, path);
-    printf("--- Path ---\n%s\n%s\n", method, path);
+    printf("--- Method and Path ---\n%s\n%s\n", method, path);
 
     // build and send an http response
     char *response = 
