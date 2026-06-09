@@ -8,11 +8,17 @@
 #define PORT 8080
 #define BUFFER_SIZE 4096
 
+void parse_request(char *buffer, char *method, char *path) {
+  sscanf(buffer, "%s %s", method, path);
+}
+
 int main() {
   int server_fd, client_fd;
   struct sockaddr_in address;
   int addrlen = sizeof(address);
   char buffer[BUFFER_SIZE] = {0};
+  char method[8];
+  char path[256];
 
   // create a tcp socket
   server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -39,6 +45,9 @@ int main() {
     // read the http request
     read(client_fd, buffer, BUFFER_SIZE);
     printf("--- Request ---\n%s\n", buffer);
+
+    parse_request(buffer, method, path);
+    printf("--- Path ---\n%s\n%s\n", method, path);
 
     // build and send an http response
     char *response = 
