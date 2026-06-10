@@ -17,8 +17,7 @@ int main() {
   struct sockaddr_in address;
   int addrlen = sizeof(address);
   char buffer[BUFFER_SIZE] = {0};
-  char method[8];
-  char path[256];
+  char method[8], path[256];
 
   // create a tcp socket
   server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -50,16 +49,39 @@ int main() {
     parse_request(buffer, method, path);
     printf("--- Method and Path ---\n%s\n%s\n", method, path);
 
-    // build and send an http response
-    char *response = 
-      "HTTP/1.1 200 OK\r\n"
-      "Content-Type: text/html\r\n"
-      "Connection: close\r\n"
-      "\r\n"
-      "<h1>Hello from my C server!</h1>";
+    char *body;
+    if (strcmp(path, "/") == 0) {
+      body = "<h1>Home Page</h1>";
+    } else if (strcmp(path, "/about") == 0) {
+      body = "<h1>About Page</h1>";
+    } else {
+      // 404
+      char *not_found = 
+        "HTTP/1.1 404 Not Found\r\n"
+        "Content-Type: text/html\r\n"
+        "Connection: close\r\n"
+        "\r\n"
+        "<h1>404 - Not Found</h1>";
+      
+      send(client_fd, not_found, strlen(not_found), 0);
+      close(client_fd);
+      continue;
+    }
+
+    // build a 200 response with the body
+    char response[1024];
+    snprintf(response, sizeof(response), 
+             "HTTP/1.1 200 OK\r\n"
+             "Content-Type: text/html\r\n"
+             "Content-Length: %zu\r\n"
+             "Connection: close\r\n"
+             "\r\n"
+             "%s",
+             strlen(body), body);
     
     send(client_fd, response, strlen(response), 0);
-    close(client_fd); // done with this client
+    close(client_fd);
+
     memset(buffer, 0, BUFFER_SIZE);
   }
 
