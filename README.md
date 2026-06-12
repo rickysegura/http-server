@@ -1,2 +1,2 @@
 # HTTP Server Written in C
-This server is under development. Check back soon for more!
+Copyright (c) 2026 Ricky Segura. All Rights Reserved.
