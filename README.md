@@ -1,4 +1,4 @@
-# HTTP Server in C
+# HTTP Server
 
 A lightweight HTTP server built from scratch in C using raw POSIX sockets. No frameworks, no dependencies — just C, the standard library, and pthreads.
 
